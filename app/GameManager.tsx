@@ -15,6 +15,9 @@ export function GameManager() {
       >
         toggle dark mode (currently {mode})
       </button>
+      <button onClick={() => document.documentElement.requestFullscreen?.()}>
+        fullscreen
+      </button>
     </div>
   );
 }
