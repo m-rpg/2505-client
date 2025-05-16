@@ -1,0 +1,7 @@
+{
+  "variableName": "__theme_mode",
+  "persist": {
+    "type": "cookie",
+    "key": "THEME"
+  }
+}
