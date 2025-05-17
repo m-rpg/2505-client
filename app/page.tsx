@@ -1,6 +1,5 @@
-import { App } from "./App";
-import "./page.css";
+import { PageInternal } from "./PageInternal";
 
 export default function Page() {
-  return <App />;
+  return <PageInternal />;
 }

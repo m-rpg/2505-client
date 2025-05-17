@@ -5,16 +5,15 @@ import styles from "./App.module.css";
 import Game from "./Game";
 import { GameManager } from "./GameManager";
 
-export function App() {
-  const [games, setGames] = useState([
-    { id: 1, title: "Game 1", color: "#e11d46" },
-    { id: 2, title: "Game 2", color: "#2563eb" },
-    { id: 3, title: "Game 3", color: "#d97706" },
-    { id: 4, title: "Game 4", color: "#059669" },
-    { id: 5, title: "Game 5", color: "#7c3aed" },
-  ]);
+export interface GameInstance {
+  id: string;
+  color: string;
+}
 
-  const [activeGameId, setActiveGameId] = useState<number | undefined>();
+export function App() {
+  const [games, setGames] = useState<GameInstance[]>([]);
+
+  const [activeGameId, setActiveGameId] = useState<string | undefined>();
   const [aspectRatioState, setAspectRatioState] = useState<
     "normal" | "narrow" | "fullscreen"
   >("normal");
@@ -37,7 +36,7 @@ export function App() {
     return () => window.removeEventListener("resize", checkAspectRatio);
   }, []);
 
-  const handleGameSelect = (id: number | undefined) => {
+  const handleGameSelect = (id: string | undefined) => {
     setActiveGameId(id);
   };
 
@@ -57,7 +56,7 @@ export function App() {
                   }`}
                   onClick={() => handleGameSelect(game.id)}
                 >
-                  <Game title={game.title} color={game.color} />
+                  <Game id={game.id} color={game.color} />
                 </div>
               ))}
               <div
@@ -66,7 +65,11 @@ export function App() {
                 }`}
                 onClick={() => handleGameSelect(undefined)}
               >
-                <GameManager />
+                <GameManager
+                  games={games}
+                  setGames={setGames}
+                  setActiveGame={setActiveGameId}
+                />
               </div>
             </div>
           </div>
@@ -79,9 +82,13 @@ export function App() {
           <div className={styles["verticalFullscreen"]}>
             <div className={styles["gameContainer"]}>
               {activeGame ? (
-                <Game title={activeGame.title} color={activeGame.color} />
+                <Game id={activeGame.id} color={activeGame.color} />
               ) : (
-                <GameManager />
+                <GameManager
+                  games={games}
+                  setGames={setGames}
+                  setActiveGame={setActiveGameId}
+                />
               )}
             </div>
           </div>
@@ -94,9 +101,13 @@ export function App() {
           <div className={styles["verticalNarrow"]}>
             <div className={styles["centeredGameContainer"]}>
               {activeGame ? (
-                <Game title={activeGame.title} color={activeGame.color} />
+                <Game id={activeGame.id} color={activeGame.color} />
               ) : (
-                <GameManager />
+                <GameManager
+                  games={games}
+                  setGames={setGames}
+                  setActiveGame={setActiveGameId}
+                />
               )}
             </div>
           </div>
