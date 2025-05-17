@@ -3,10 +3,8 @@
   background-color: #ffffff;
 }
 
-:global .dark {
-  :local .main {
-    background-color: #18181b;
-  }
+.dark .main {
+  background-color: #18181b;
 }
 
 .verticalFullscreen {
@@ -54,6 +52,7 @@
 .gameWrapper {
   height: 100%;
   aspect-ratio: 9 / 16;
+  overflow: hidden;
   cursor: pointer;
 }
 
@@ -61,8 +60,6 @@
   box-shadow: 0 0 0 2px black;
 }
 
-:global .dark {
-  :local .activeGame {
-    box-shadow: 0 0 0 2px white;
-  }
+.dark .activeGame {
+  box-shadow: 0 0 0 2px white;
 }

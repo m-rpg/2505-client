@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import styles from "./App.module.css";
+import "./App.css";
 import Game, { GameProps } from "./Game";
 import { GameManager } from "./GameManager";
 
@@ -40,14 +40,14 @@ export function App() {
   switch (aspectRatioState) {
     case "normal":
       return (
-        <main className={styles["main"]}>
-          <div className={styles["scrollContainer"]}>
-            <div className={styles["gamesRow"]}>
+        <main className="main">
+          <div className="scrollContainer">
+            <div className="gamesRow">
               {games.map((game) => (
                 <div
                   key={game.id}
-                  className={`${styles["gameWrapper"]} ${
-                    game.id === activeGameId ? styles["activeGame"] : ""
+                  className={`gameWrapper ${
+                    game.id === activeGameId ? "activeGame" : ""
                   }`}
                   onClick={() => handleGameSelect(game.id)}
                 >
@@ -55,8 +55,8 @@ export function App() {
                 </div>
               ))}
               <div
-                className={`${styles["gameWrapper"]} ${
-                  activeGameId === undefined ? styles["activeGame"] : ""
+                className={`gameWrapper ${
+                  activeGameId === undefined ? "activeGame" : ""
                 }`}
                 onClick={() => handleGameSelect(undefined)}
               >
@@ -74,8 +74,8 @@ export function App() {
     case "fullscreen":
       return (
         <main>
-          <div className={styles["verticalFullscreen"]}>
-            <div className={styles["gameContainer"]}>
+          <div className="verticalFullscreen">
+            <div className="gameContainer">
               {activeGame ? (
                 <Game id={activeGame.id} color={activeGame.color} />
               ) : (
@@ -93,8 +93,8 @@ export function App() {
     case "narrow":
       return (
         <main>
-          <div className={styles["verticalNarrow"]}>
-            <div className={styles["centeredGameContainer"]}>
+          <div className="verticalNarrow">
+            <div className="centeredGameContainer">
               {activeGame ? (
                 <Game id={activeGame.id} color={activeGame.color} />
               ) : (

@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 export function useRerender(): () => void {
-  const [, rerender] = useState(0);
+  const [, rerender] = useState({});
 
   return () => {
-    rerender(0);
+    rerender({});
   };
 }
