@@ -1,12 +1,12 @@
 import { ModeContext } from "@-ft/mode-next";
-import { useContext, useState } from "react";
-import { GameInstance } from "./App";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { hsvToRgbHexCode } from "./color/hsvToRgbHexCode";
+import { GameProps } from "./Game";
 
 export interface GameManagerProps {
-  games: GameInstance[];
-  setGames: (games: GameInstance[]) => void;
-  setActiveGame: (id: string) => void;
+  games: GameProps[];
+  setGames: Dispatch<SetStateAction<GameProps[]>>;
+  setActiveGame: Dispatch<SetStateAction<string | undefined>>;
 }
 
 export function GameManager({
@@ -16,6 +16,26 @@ export function GameManager({
 }: GameManagerProps) {
   const { setMode, mode } = useContext(ModeContext);
   const [newGameId, setNewGameId] = useState("");
+
+  const addNewGame = () => {
+    if (games.find((game) => game.id === newGameId)) {
+      alert("Game already exists");
+      return;
+    }
+    const newGame = {
+      id: newGameId,
+      color: hsvToRgbHexCode(
+        Math.random(),
+        1 - Math.pow(Math.random(), 3),
+        1 - Math.pow(Math.random(), 2)
+      ),
+    };
+    setGames((games) =>
+      games.find((game) => game.id === newGame.id) ? games : [...games, newGame]
+    );
+    setActiveGame(newGameId);
+    setNewGameId("");
+  };
 
   return (
     <div>
@@ -36,20 +56,16 @@ export function GameManager({
         type="text"
         value={newGameId}
         onChange={(e) => setNewGameId(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            addNewGame();
+            e.stopPropagation();
+          }
+        }}
       />
       <button
         onClick={(e) => {
-          const newGame = {
-            id: newGameId,
-            color: hsvToRgbHexCode(
-              Math.random(),
-              1 - Math.pow(Math.random(), 3),
-              1 - Math.pow(Math.random(), 2)
-            ),
-          };
-          setGames([...games, newGame]);
-          setActiveGame(newGameId);
-          setNewGameId("");
+          addNewGame();
           e.stopPropagation();
         }}
       >

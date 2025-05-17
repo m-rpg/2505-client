@@ -2,16 +2,11 @@
 
 import { useEffect, useState } from "react";
 import styles from "./App.module.css";
-import Game from "./Game";
+import Game, { GameProps } from "./Game";
 import { GameManager } from "./GameManager";
 
-export interface GameInstance {
-  id: string;
-  color: string;
-}
-
 export function App() {
-  const [games, setGames] = useState<GameInstance[]>([]);
+  const [games, setGames] = useState<GameProps[]>([]);
 
   const [activeGameId, setActiveGameId] = useState<string | undefined>();
   const [aspectRatioState, setAspectRatioState] = useState<
