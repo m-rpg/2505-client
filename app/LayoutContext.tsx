@@ -31,8 +31,6 @@ export function LayoutContextProvider({ children }: PropsWithChildren) {
   const { app } = useApplication();
   const { width, height } = app.canvas;
 
-  console.log(width, height);
-
   const value = useMemo(() => ({ scale: width / 100 }), [width]);
 
   return (
