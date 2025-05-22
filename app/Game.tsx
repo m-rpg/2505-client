@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { contrastColor } from "./color/contrastColor";
 import styles from "./Game.module.css";
-import { simpleHashColor } from "./simpleHashColor";
+import { contrastColor } from "./lib/color/contrastColor";
+import { simpleHashColor } from "./lib/simpleHashColor";
 import { focusRef } from "./util/focusRef";
 import { useAtomicState } from "./util/useAtomicState";
 import { useUnmountedRef } from "./util/useUnmountedRef";

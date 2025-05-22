@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 import styles from "./App.module.css";
 import Game from "./Game";
 import { GameManager } from "./GameManager";
+import { useLocalStorage } from "./lib/storage/useLocalStorage";
+import { useSessionStorage } from "./lib/storage/useSessionStorage";
 
 export function App() {
-  const [games, setGames] = useState<string[]>([]);
+  const sessionStorageGames = useSessionStorage(1000);
+  const localStorageGames = useLocalStorage(1000);
 
   const [activeGameId, setActiveGameId] = useState<string | undefined>();
   const [aspectRatioState, setAspectRatioState] = useState<
@@ -35,7 +38,7 @@ export function App() {
     setActiveGameId(id);
   };
 
-  const activeGame = games.find((g) => g === activeGameId);
+  const activeGame = sessionStorageGames.find((g) => g === activeGameId);
 
   switch (aspectRatioState) {
     case "normal":
@@ -43,7 +46,7 @@ export function App() {
         <main className={styles["main"]}>
           <div className={styles["scrollContainer"]}>
             <div className={styles["gamesRow"]}>
-              {games.map((game) => (
+              {sessionStorageGames.map((game) => (
                 <div
                   key={game}
                   className={`${styles["gameWrapper"]} ${
@@ -61,8 +64,8 @@ export function App() {
                 onClick={() => handleGameSelect(undefined)}
               >
                 <GameManager
-                  games={games}
-                  setGames={setGames}
+                  sessionStorageGames={sessionStorageGames}
+                  localStorageGames={localStorageGames}
                   setActiveGame={setActiveGameId}
                 />
               </div>
@@ -80,8 +83,8 @@ export function App() {
                 <Game id={activeGame} />
               ) : (
                 <GameManager
-                  games={games}
-                  setGames={setGames}
+                  sessionStorageGames={sessionStorageGames}
+                  localStorageGames={localStorageGames}
                   setActiveGame={setActiveGameId}
                 />
               )}
@@ -99,8 +102,8 @@ export function App() {
                 <Game id={activeGame} />
               ) : (
                 <GameManager
-                  games={games}
-                  setGames={setGames}
+                  sessionStorageGames={sessionStorageGames}
+                  localStorageGames={localStorageGames}
                   setActiveGame={setActiveGameId}
                 />
               )}
