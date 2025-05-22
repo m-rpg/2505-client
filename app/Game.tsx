@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { contrastColor } from "./color/contrastColor";
 import styles from "./Game.module.css";
+import { simpleHashColor } from "./simpleHashColor";
 import { focusRef } from "./util/focusRef";
 import { useAtomicState } from "./util/useAtomicState";
 import { useUnmountedRef } from "./util/useUnmountedRef";
 
 export interface GameProps {
   id: string;
-  color: string;
 }
 
 type State = StateLogin | StateLoggedIn;
@@ -21,7 +21,11 @@ interface StateLoggedIn {
   accessToken: string;
 }
 
-function Splash({ id, color }: GameProps) {
+interface SplashProps extends GameProps {
+  color: string;
+}
+
+function Splash({ id, color }: SplashProps) {
   return (
     <div className={styles["container"]}>
       <div className={styles["content"]} style={{ backgroundColor: color }}>
@@ -44,7 +48,9 @@ function Splash({ id, color }: GameProps) {
   );
 }
 
-export default function Game({ id, color }: GameProps) {
+export default function Game({ id }: GameProps) {
+  const color = simpleHashColor(id);
+
   const [state, setState] = useState<State>({
     type: "login",
   });
@@ -60,6 +66,7 @@ export default function Game({ id, color }: GameProps) {
 }
 
 interface LoginProps extends GameProps {
+  color: string;
   state: StateLogin;
   setState: Dispatch<SetStateAction<State>>;
 }
@@ -183,6 +190,7 @@ function Login({ id, color, state, setState }: LoginProps) {
 }
 
 interface LoggedInProps extends GameProps {
+  color: string;
   state: StateLoggedIn;
   setState: Dispatch<SetStateAction<State>>;
 }

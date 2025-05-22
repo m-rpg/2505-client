@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import styles from "./App.module.css";
-import Game, { GameProps } from "./Game";
+import Game from "./Game";
 import { GameManager } from "./GameManager";
 
 export function App() {
-  const [games, setGames] = useState<GameProps[]>([]);
+  const [games, setGames] = useState<string[]>([]);
 
   const [activeGameId, setActiveGameId] = useState<string | undefined>();
   const [aspectRatioState, setAspectRatioState] = useState<
@@ -35,7 +35,7 @@ export function App() {
     setActiveGameId(id);
   };
 
-  const activeGame = games.find((g) => g.id === activeGameId);
+  const activeGame = games.find((g) => g === activeGameId);
 
   switch (aspectRatioState) {
     case "normal":
@@ -45,13 +45,13 @@ export function App() {
             <div className={styles["gamesRow"]}>
               {games.map((game) => (
                 <div
-                  key={game.id}
+                  key={game}
                   className={`${styles["gameWrapper"]} ${
-                    game.id === activeGameId ? styles["activeGame"] : ""
+                    game === activeGameId ? styles["activeGame"] : ""
                   }`}
-                  onClick={() => handleGameSelect(game.id)}
+                  onClick={() => handleGameSelect(game)}
                 >
-                  <Game id={game.id} color={game.color} />
+                  <Game id={game} />
                 </div>
               ))}
               <div
@@ -77,7 +77,7 @@ export function App() {
           <div className={styles["verticalFullscreen"]}>
             <div className={styles["gameContainer"]}>
               {activeGame ? (
-                <Game id={activeGame.id} color={activeGame.color} />
+                <Game id={activeGame} />
               ) : (
                 <GameManager
                   games={games}
@@ -96,7 +96,7 @@ export function App() {
           <div className={styles["verticalNarrow"]}>
             <div className={styles["centeredGameContainer"]}>
               {activeGame ? (
-                <Game id={activeGame.id} color={activeGame.color} />
+                <Game id={activeGame} />
               ) : (
                 <GameManager
                   games={games}
