@@ -15,7 +15,7 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -29,15 +29,16 @@
         "name": "next"
       }
     ],
-    "incremental": true
+    "incremental": true,
   },
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
+    "app/util/pixi.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
   ],
   "exclude": [
-    "node_modules"
-  ]
+    "node_modules",
+  ],
 }
