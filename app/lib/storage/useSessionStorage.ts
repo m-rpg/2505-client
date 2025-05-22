@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { deepEqual } from "../deepEqual";
 import { onSessionStorageChange } from "../events";
 import { getSessionStorage } from "./getSessionStorage";
 
 export function useSessionStorage(pollingRateInMs: number) {
-  const [value, setValue] = useState<string[]>(getSessionStorage);
+  const [value, setValue] = useState(getSessionStorage);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
@@ -12,7 +13,7 @@ export function useSessionStorage(pollingRateInMs: number) {
       timeoutId = setTimeout(timeoutFunc, pollingRateInMs);
       setValue((prev) => {
         const next = getSessionStorage();
-        if (prev.join("\n") === next.join("\n")) {
+        if (deepEqual(prev, next)) {
           return prev;
         }
         return next;

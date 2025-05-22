@@ -1,27 +1,19 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Game.module.css";
 import { contrastColor } from "./lib/color/contrastColor";
+import { GameState, GameStateWithoutId } from "./lib/GameState";
 import { simpleHashColor } from "./lib/simpleHashColor";
 import { focusRef } from "./util/focusRef";
 import { useAtomicState } from "./util/useAtomicState";
 import { useUnmountedRef } from "./util/useUnmountedRef";
 
 export interface GameProps {
+  state: GameState;
+  setState: (newState: GameStateWithoutId) => void;
+}
+
+interface SplashProps {
   id: string;
-}
-
-type State = StateLogin | StateLoggedIn;
-
-interface StateLogin {
-  type: "login";
-}
-
-interface StateLoggedIn {
-  type: "loggedIn";
-  accessToken: string;
-}
-
-interface SplashProps extends GameProps {
   color: string;
 }
 
@@ -48,36 +40,37 @@ function Splash({ id, color }: SplashProps) {
   );
 }
 
-export default function Game({ id }: GameProps) {
-  const color = simpleHashColor(id);
-
-  const [state, setState] = useState<State>({
-    type: "login",
-  });
+export default function Game({ state, setState }: GameProps) {
+  const color = simpleHashColor(state.id);
 
   switch (state.type) {
-    case "login":
-      return <Login id={id} color={color} state={state} setState={setState} />;
+    case "beforeLogin":
+      return <Login id={state.id} color={color} setState={setState} />;
     case "loggedIn":
       return (
-        <LoggedIn id={id} color={color} state={state} setState={setState} />
+        <LoggedIn
+          id={state.id}
+          color={color}
+          accessToken={state.accessToken}
+          setState={setState}
+        />
       );
   }
 }
 
-interface LoginProps extends GameProps {
+interface LoginProps {
+  id: string;
   color: string;
-  state: StateLogin;
-  setState: Dispatch<SetStateAction<State>>;
+  setState: (newState: GameStateWithoutId) => void;
 }
 
-function Login({ id, color, state, setState }: LoginProps) {
+function Login({ id, color, setState }: LoginProps) {
   const [password, setPassword] = useState("");
   const [loadingRef, setLoading] = useAtomicState(false);
   const unmountedRef = useUnmountedRef();
 
   const handleLogin = () => {
-    if (state.type !== "login" || loadingRef.current) {
+    if (loadingRef.current) {
       return;
     }
     setLoading(true);
@@ -101,7 +94,6 @@ function Login({ id, color, state, setState }: LoginProps) {
           return;
         }
         setState({
-          ...state,
           type: "loggedIn",
           accessToken: data.token,
         });
@@ -116,9 +108,6 @@ function Login({ id, color, state, setState }: LoginProps) {
   };
 
   const handleRegister = () => {
-    if (state.type !== "login" || loadingRef.current) {
-      return;
-    }
     setLoading(true);
 
     (async () => {
@@ -189,13 +178,14 @@ function Login({ id, color, state, setState }: LoginProps) {
   );
 }
 
-interface LoggedInProps extends GameProps {
+interface LoggedInProps {
+  id: string;
   color: string;
-  state: StateLoggedIn;
-  setState: Dispatch<SetStateAction<State>>;
+  accessToken: string;
+  setState: (newState: GameStateWithoutId) => void;
 }
 
-function LoggedIn({ id, color, state, setState }: LoggedInProps) {
+function LoggedIn({ id, color, accessToken, setState }: LoggedInProps) {
   const [loadingRef, setLoading] = useAtomicState(false);
   const unmountedRef = useUnmountedRef();
 
@@ -212,7 +202,7 @@ function LoggedIn({ id, color, state, setState }: LoggedInProps) {
           {
             method: "GET",
             headers: {
-              Authorization: `${state.accessToken}`,
+              Authorization: `${accessToken}`,
             },
           }
         );
@@ -234,7 +224,7 @@ function LoggedIn({ id, color, state, setState }: LoggedInProps) {
             {
               method: "POST",
               headers: {
-                Authorization: `${state.accessToken}`,
+                Authorization: `${accessToken}`,
               },
             }
           );

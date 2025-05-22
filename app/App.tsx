@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import styles from "./App.module.css";
 import Game from "./Game";
 import { GameManager } from "./GameManager";
+import { GameStateWithoutId } from "./lib/GameState";
+import { updateSessionStorage } from "./lib/storage/updateSessionStorage";
 import { useLocalStorage } from "./lib/storage/useLocalStorage";
 import { useSessionStorage } from "./lib/storage/useSessionStorage";
 
@@ -38,7 +40,11 @@ export function App() {
     setActiveGameId(id);
   };
 
-  const activeGame = sessionStorageGames.find((g) => g === activeGameId);
+  const setGameState = (id: string, newState: GameStateWithoutId) => {
+    updateSessionStorage(id, { ...newState, id });
+  };
+
+  const activeGame = sessionStorageGames.find((g) => g.id === activeGameId);
 
   switch (aspectRatioState) {
     case "normal":
@@ -48,13 +54,16 @@ export function App() {
             <div className={styles["gamesRow"]}>
               {sessionStorageGames.map((game) => (
                 <div
-                  key={game}
+                  key={game.id}
                   className={`${styles["gameWrapper"]} ${
-                    game === activeGameId ? styles["activeGame"] : ""
+                    game.id === activeGameId ? styles["activeGame"] : ""
                   }`}
-                  onClick={() => handleGameSelect(game)}
+                  onClick={() => handleGameSelect(game.id)}
                 >
-                  <Game id={game} />
+                  <Game
+                    state={game}
+                    setState={(newState) => setGameState(game.id, newState)}
+                  />
                 </div>
               ))}
               <div
@@ -80,7 +89,10 @@ export function App() {
           <div className={styles["verticalFullscreen"]}>
             <div className={styles["gameContainer"]}>
               {activeGame ? (
-                <Game id={activeGame} />
+                <Game
+                  state={activeGame}
+                  setState={(newState) => setGameState(activeGame.id, newState)}
+                />
               ) : (
                 <GameManager
                   sessionStorageGames={sessionStorageGames}
@@ -99,7 +111,10 @@ export function App() {
           <div className={styles["verticalNarrow"]}>
             <div className={styles["centeredGameContainer"]}>
               {activeGame ? (
-                <Game id={activeGame} />
+                <Game
+                  state={activeGame}
+                  setState={(newState) => setGameState(activeGame.id, newState)}
+                />
               ) : (
                 <GameManager
                   sessionStorageGames={sessionStorageGames}

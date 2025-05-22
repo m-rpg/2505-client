@@ -1,12 +1,13 @@
 import { ModeContext } from "@-ft/mode-next";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
+import { GameState } from "./lib/GameState";
 import { addLocalStorage } from "./lib/storage/addLocalStorage";
 import { addSessionStorage } from "./lib/storage/addSessionStorage";
 import { removeLocalStorage } from "./lib/storage/removeLocalStorage";
 import { removeSessionStorage } from "./lib/storage/removeSessionStorage";
 
 export interface GameManagerProps {
-  sessionStorageGames: string[];
+  sessionStorageGames: GameState[];
   localStorageGames: string[];
   setActiveGame: Dispatch<SetStateAction<string | undefined>>;
 }
@@ -20,7 +21,7 @@ export function GameManager({
   const [newGameId, setNewGameId] = useState("");
 
   const handleAddNewGame = () => {
-    addSessionStorage(newGameId);
+    addSessionStorage({ id: newGameId, type: "beforeLogin" });
     addLocalStorage(newGameId);
     setActiveGame(newGameId);
     setNewGameId("");
@@ -76,7 +77,7 @@ function LocalStorageGameList({
   sessionStorageGames,
   localStorageGames,
 }: {
-  sessionStorageGames: string[];
+  sessionStorageGames: GameState[];
   localStorageGames: string[];
 }) {
   return (
@@ -86,10 +87,16 @@ function LocalStorageGameList({
         {localStorageGames.map((game) => (
           <li key={game}>
             {game}
-            {!sessionStorageGames.includes(game) && (
+            {!sessionStorageGames.some((g) => g.id === game) && (
               <>
                 {" "}
-                <button onClick={() => addSessionStorage(game)}>add</button>
+                <button
+                  onClick={() =>
+                    addSessionStorage({ id: game, type: "beforeLogin" })
+                  }
+                >
+                  add
+                </button>
               </>
             )}{" "}
             <button onClick={() => removeLocalStorage(game)}>remove</button>
@@ -105,7 +112,7 @@ function SessionStorageGameList({
   sessionStorageGames,
   localStorageGames,
 }: {
-  sessionStorageGames: string[];
+  sessionStorageGames: GameState[];
   localStorageGames: string[];
 }) {
   return (
@@ -113,13 +120,15 @@ function SessionStorageGameList({
       Current items:
       <ul>
         {sessionStorageGames.map((game) => (
-          <li key={game}>
-            {game}{" "}
-            <button onClick={() => removeSessionStorage(game)}>remove</button>
-            {!localStorageGames.includes(game) && (
+          <li key={game.id}>
+            {game.id}{" "}
+            <button onClick={() => removeSessionStorage(game.id)}>
+              remove
+            </button>
+            {!localStorageGames.includes(game.id) && (
               <>
                 {" "}
-                <button onClick={() => addLocalStorage(game)}>save</button>
+                <button onClick={() => addLocalStorage(game.id)}>save</button>
               </>
             )}
           </li>
