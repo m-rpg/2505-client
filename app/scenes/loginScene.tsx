@@ -1,4 +1,3 @@
-import { Canvas } from "@react-three/fiber";
 import { Container, Fullscreen, Text } from "@react-three/uikit";
 import {
   Button,
@@ -11,9 +10,10 @@ import { ComponentType, useState } from "react";
 import { SceneComponentProps } from "../SceneComponentProps";
 import { useAtomicState } from "../util/useAtomicState";
 import { useUnmountedRef } from "../util/useUnmountedRef";
+import { sceneRouter } from "./sceneRouter";
 
 export function loginScene(id: string): ComponentType<SceneComponentProps> {
-  function LoginPage({ setState }: SceneComponentProps) {
+  function LoginScene({ setState, setScene }: SceneComponentProps) {
     const [password, setPassword] = useState("");
     const [loadingRef, setLoading] = useAtomicState(false);
     const unmountedRef = useUnmountedRef();
@@ -42,10 +42,10 @@ export function loginScene(id: string): ComponentType<SceneComponentProps> {
           if (unmountedRef.current) {
             return;
           }
-          setState({
-            type: "loggedIn",
-            accessToken: data.token,
-          });
+          setState({ type: "loggedIn", accessToken: data.token });
+          setScene(
+            sceneRouter({ type: "loggedIn", id, accessToken: data.token }),
+          );
           setLoading(false);
         } catch (error) {
           if (!unmountedRef.current) {
@@ -88,11 +88,7 @@ export function loginScene(id: string): ComponentType<SceneComponentProps> {
     };
 
     return (
-      <Canvas
-        orthographic
-        style={{ position: "absolute", inset: "0", touchAction: "none" }}
-        gl={{ localClippingEnabled: true }}
-      >
+      <>
         <ambientLight intensity={0.5} />
         <directionalLight intensity={1} position={[-5, 5, 10]} />
 
@@ -113,7 +109,7 @@ export function loginScene(id: string): ComponentType<SceneComponentProps> {
                 alignItems="center"
                 gap={16}
               >
-                <Text fontSize={32}>Login</Text>
+                <Text fontSize={32}>Login as {id}</Text>
                 <Input
                   placeholder="Password"
                   type="password"
@@ -132,9 +128,9 @@ export function loginScene(id: string): ComponentType<SceneComponentProps> {
             </DialogAnchor>
           </Fullscreen>
         </Defaults>
-      </Canvas>
+      </>
     );
   }
 
-  return LoginPage;
+  return LoginScene;
 }
