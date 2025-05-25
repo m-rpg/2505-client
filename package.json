@@ -7,9 +7,13 @@
   },
   "dependencies": {
     "@-ft/mode-next": "^0.1.7",
+    "@react-three/drei": "^10.0.8",
+    "@react-three/fiber": "^9.1.2",
+    "@react-three/uikit-default": "^0.8.19",
     "next": "^15.3.2",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "three": "^0.176.0"
   },
   "devDependencies": {
     "@types/node": "22.15.18",
