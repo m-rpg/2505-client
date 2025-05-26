@@ -52,8 +52,6 @@ export default function Game({ state, setState }: GameProps) {
     [setScene],
   );
 
-  console.log(scene);
-
   const Scene = scene;
 
   return (
