@@ -41,6 +41,11 @@ function LoggedIn({ setScene, setState, id, accessToken }: LoggedInProps) {
             },
           },
         );
+        if (response1.status === 401) {
+          setState({ type: "beforeLogin" });
+          setScene(loginScene(id));
+          return;
+        }
         if (!response1.ok) {
           if (!unmountedRef.current) {
             setLoading(false);
@@ -63,6 +68,11 @@ function LoggedIn({ setScene, setState, id, accessToken }: LoggedInProps) {
               },
             },
           );
+          if (response2.status === 401) {
+            setState({ type: "beforeLogin" });
+            setScene(loginScene(id));
+            return;
+          }
           if (!response2.ok) {
             if (!unmountedRef.current) {
               setLoading(false);
