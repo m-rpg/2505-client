@@ -8,7 +8,7 @@ export interface GameStateBeforeLogin {
 export interface GameStateLoggedIn {
   id: string;
   type: "loggedIn";
-  accessToken: string;
+  token: string;
 }
 
 export type GameStateWithoutId =

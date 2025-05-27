@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import styles from "./App.module.css";
-import Game from "./Game";
+import Game, { EnhancedGameState } from "./Game";
 import { GameManager } from "./GameManager";
+import { Client } from "./lib/client/Client";
 import { GameStateWithoutId } from "./lib/GameState";
 import { updateSessionStorage } from "./lib/storage/updateSessionStorage";
 import { useLocalStorage } from "./lib/storage/useLocalStorage";
@@ -12,6 +13,33 @@ import { useSessionStorage } from "./lib/storage/useSessionStorage";
 export function App() {
   const sessionStorageGames = useSessionStorage(1000);
   const localStorageGames = useLocalStorage(1000);
+  const [games, setGames] = useState<EnhancedGameState[]>(() =>
+    sessionStorageGames.map((state) =>
+      state.type === "loggedIn"
+        ? {
+            ...state,
+            client: new Client(state.id, state.token),
+          }
+        : state,
+    ),
+  );
+  useEffect(() => {
+    setGames(
+      sessionStorageGames.map((state) => {
+        if (state.type !== "loggedIn") {
+          return state;
+        }
+        const previous = games.find((g) => g.id === state.id);
+        if (previous && previous.type === state.type) {
+          return previous;
+        }
+        return {
+          ...state,
+          client: new Client(state.id, state.token),
+        };
+      }),
+    );
+  }, [sessionStorageGames]);
 
   const [activeGameId, setActiveGameId] = useState<string | undefined>();
   const [aspectRatioState, setAspectRatioState] = useState<
@@ -44,7 +72,7 @@ export function App() {
     updateSessionStorage(id, { ...newState, id });
   };
 
-  const activeGame = sessionStorageGames.find((g) => g.id === activeGameId);
+  const activeGame = games.find((g) => g.id === activeGameId);
 
   switch (aspectRatioState) {
     case "normal":
@@ -52,7 +80,7 @@ export function App() {
         <main className={styles["main"]}>
           <div className={styles["scrollContainer"]}>
             <div className={styles["gamesRow"]}>
-              {sessionStorageGames.map((game) => (
+              {games.map((game) => (
                 <div
                   key={game.id}
                   className={`${styles["gameWrapper"]} ${
