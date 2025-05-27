@@ -1,6 +1,7 @@
 import { Container, Fullscreen, Text } from "@react-three/uikit";
 import { Button, Defaults, DialogAnchor } from "@react-three/uikit-default";
 import { ComponentType, useEffect } from "react";
+import { useWatchValue } from "../../util/useWatchValue";
 import { Client } from "../client/Client";
 import { ClientComponentProps } from "./ClientComponentProps";
 
@@ -17,6 +18,8 @@ export function getReactComponent(
         }),
       [],
     );
+
+    const coins = useWatchValue(client.watchCoins);
 
     return (
       <Defaults>
@@ -37,6 +40,7 @@ export function getReactComponent(
               gap={16}
             >
               <Text fontSize={32}>Logged in as {client.id}</Text>
+              <Text fontSize={32}>{coins} coins</Text>
               <Button
                 onClick={() => setState({ type: "beforeLogin", id: client.id })}
               >

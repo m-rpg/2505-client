@@ -11,9 +11,9 @@ export class Client {
   private readonly _setLoggedOut: Change<boolean>;
   private readonly _getLoggedOut: WatchGet<boolean>;
 
-  public readonly watchPoint: Watch<number>;
-  private readonly _setPoint: Change<number>;
-  private readonly _getPoint: WatchGet<number>;
+  public readonly watchCoins: Watch<number>;
+  private readonly _setCoins: Change<number>;
+  private readonly _getCoins: WatchGet<number>;
 
   private readonly pendingJobs: Promise<unknown>[];
 
@@ -23,7 +23,7 @@ export class Client {
   ) {
     [this.watchLoggedOut, this._setLoggedOut, this._getLoggedOut] =
       watchTarget(false);
-    [this.watchPoint, this._setPoint, this._getPoint] = watchTarget(0);
+    [this.watchCoins, this._setCoins, this._getCoins] = watchTarget(0);
 
     this.pendingJobs = [];
 
@@ -96,7 +96,7 @@ export class Client {
         return;
       }
 
-      this._setPoint(result.value.user.coins);
+      this._setCoins(result.value.user.coins);
     });
   }
 
@@ -104,7 +104,7 @@ export class Client {
     return this._getLoggedOut();
   }
 
-  get point() {
-    return this._getPoint();
+  get coins() {
+    return this._getCoins();
   }
 }
