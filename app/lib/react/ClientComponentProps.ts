@@ -1,5 +1,5 @@
-import { EnhancedGameState } from "../../Game";
+import { GameStateWithoutId } from "../GameState";
 
 export interface ClientComponentProps {
-  setState: (state: EnhancedGameState) => void;
+  setState: (state: GameStateWithoutId) => void;
 }

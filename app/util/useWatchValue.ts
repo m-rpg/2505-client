@@ -7,6 +7,7 @@ export function useWatchValue<T>(watch: Watch<T>) {
     watch((t) => (value = t))();
     return value!;
   });
-  useEffect(() => watch((t) => setValue(t)), [watch]);
+  useEffect(() => watch((t) => setValue(() => t)), [watch]);
+  console.log(watch);
   return value;
 }

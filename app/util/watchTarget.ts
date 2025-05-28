@@ -26,9 +26,10 @@ export function watchTarget<T>(
       };
     },
 
-    (value: T) => {
+    (newValue: T) => {
+      value = newValue;
       for (const watcher of watchers) {
-        watcher(value);
+        watcher(newValue);
       }
     },
 

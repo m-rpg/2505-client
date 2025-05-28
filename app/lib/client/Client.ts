@@ -74,14 +74,14 @@ export class Client {
     );
 
     if (response.status === 401) {
-      this._setLoggedOut(true);
+      this.logout();
       return { ok: false, error: 401 };
     }
 
     return { ok: true, value: await response.json() };
   }
 
-  async init() {
+  private async init() {
     return await this.run(async () => {
       const result = await this.fetchJson<{
         user: {
@@ -102,6 +102,10 @@ export class Client {
 
   get loggedOut() {
     return this._getLoggedOut();
+  }
+
+  logout() {
+    this._setLoggedOut(true);
   }
 
   get coins() {

@@ -8,12 +8,12 @@ import { ClientComponentProps } from "./ClientComponentProps";
 export function getReactComponent(
   client: Client,
 ): ComponentType<ClientComponentProps> {
-  return function ClientComponent({ setState }: ClientComponentProps) {
+  return function ClientComponent({ setState }) {
     useEffect(
       () =>
         client.watchLoggedOut((loggedOut) => {
           if (loggedOut) {
-            setState({ type: "beforeLogin", id: client.id });
+            setState({ type: "beforeLogin" });
           }
         }),
       [],
@@ -41,9 +41,7 @@ export function getReactComponent(
             >
               <Text fontSize={32}>Logged in as {client.id}</Text>
               <Text fontSize={32}>{coins} coins</Text>
-              <Button
-                onClick={() => setState({ type: "beforeLogin", id: client.id })}
-              >
+              <Button onClick={() => setState({ type: "beforeLogin" })}>
                 <Text>Logout</Text>
               </Button>
             </Container>
