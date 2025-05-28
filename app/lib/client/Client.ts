@@ -15,6 +15,10 @@ export class Client {
   private readonly _setCoins: Change<number>;
   private readonly _getCoins: WatchGet<number>;
 
+  public readonly watchDailyRewardAvailability: Watch<boolean | undefined>;
+  private readonly _setDailyRewardAvailability: Change<boolean | undefined>;
+  private readonly _getDailyRewardAvailability: WatchGet<boolean | undefined>;
+
   private readonly pendingJobs: Promise<unknown>[];
 
   constructor(
@@ -24,6 +28,11 @@ export class Client {
     [this.watchLoggedOut, this._setLoggedOut, this._getLoggedOut] =
       watchTarget(false);
     [this.watchCoins, this._setCoins, this._getCoins] = watchTarget(0);
+    [
+      this.watchDailyRewardAvailability,
+      this._setDailyRewardAvailability,
+      this._getDailyRewardAvailability,
+    ] = watchTarget<boolean | undefined>(undefined);
 
     this.pendingJobs = [];
 
@@ -82,22 +91,36 @@ export class Client {
   }
 
   private async init() {
-    return await this.run(async () => {
-      const result = await this.fetchJson<{
-        user: {
-          id: string;
-          username: string;
-          coins: number;
-          reward_streak: number;
-          last_reward: string;
-        };
-      }>("GET", "profile");
-      if (!result.ok) {
-        return;
-      }
+    return Promise.all([
+      this.run(async () => {
+        const result = await this.fetchJson<{
+          user: {
+            id: string;
+            username: string;
+            coins: number;
+            reward_streak: number;
+            last_reward: string;
+          };
+        }>("GET", "profile");
+        if (!result.ok) {
+          return;
+        }
 
-      this._setCoins(result.value.user.coins);
-    });
+        this._setCoins(result.value.user.coins);
+      }),
+      this.run(async () => {
+        const result = await this.fetchJson<{
+          can_claim: boolean;
+          next_reward: string;
+          streak: number;
+        }>("GET", "daily-reward");
+        if (!result.ok) {
+          return;
+        }
+
+        this._setDailyRewardAvailability(result.value.can_claim);
+      }),
+    ]);
   }
 
   get loggedOut() {
@@ -110,5 +133,36 @@ export class Client {
 
   get coins() {
     return this._getCoins();
+  }
+
+  get dailyRewardAvailability() {
+    return this._getDailyRewardAvailability();
+  }
+
+  async claimDailyReward() {
+    if (!this.dailyRewardAvailability) {
+      return;
+    }
+
+    this._setDailyRewardAvailability(undefined);
+    return this.run(async () => {
+      const result = await this.fetchJson<{
+        message: string;
+        reward: {
+          base_reward: number;
+          streak_bonus: number;
+          total_reward: number;
+          new_balance: number;
+          new_streak: number;
+          next_reward: string;
+        };
+      }>("POST", "daily-reward/claim");
+      if (!result.ok) {
+        return;
+      }
+
+      this._setDailyRewardAvailability(false);
+      this._setCoins(result.value.reward.new_balance);
+    });
   }
 }

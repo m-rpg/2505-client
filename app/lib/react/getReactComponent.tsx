@@ -20,6 +20,9 @@ export function getReactComponent(
     );
 
     const coins = useWatchValue(client.watchCoins);
+    const dailyRewardAvailability = useWatchValue(
+      client.watchDailyRewardAvailability,
+    );
 
     return (
       <Defaults>
@@ -41,6 +44,13 @@ export function getReactComponent(
             >
               <Text fontSize={32}>Logged in as {client.id}</Text>
               <Text fontSize={32}>{coins} coins</Text>
+              <Button onClick={() => client.claimDailyReward()}>
+                <Text>
+                  {dailyRewardAvailability
+                    ? "Claim daily reward"
+                    : "Daily reward not available"}
+                </Text>
+              </Button>
               <Button onClick={() => setState({ type: "beforeLogin" })}>
                 <Text>Logout</Text>
               </Button>
